@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+ http://www.springframework.org/schema/beans 
+ http://www.springframework.org/schema/beans/spring-beans.xsd
+ http://www.springframework.org/schema/util 
+ http://www.springframework.org/schema/util/spring-util.xsd
+   http://www.springframework.org/schema/tx
+   http://www.springframework.org/schema/tx/spring-tx.xsd
+  http://www.springframework.org/schema/context 
+ http://www.springframework.org/schema/context/spring-context.xsd
+    ">
+ 
+ 
+ 
+ 
+ 	<!-- 1. Activation of Annotations -->
+ 	
+ 	<context:component-scan base-package="com.app"/> 
+ 	<tx:annotation-driven/>
+ 
+ 	<!-- 2. View Resolver (prefix=location= /web-inf/jsps) suffix=.jsp -->
+ 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+ 		p:prefix="/WEB-INF/views/"
+ 		p:suffix=".jsp"
+ 	/>
+ 	
+ 	<!-- 3. DataSource Object : Connection-->
+ 	<bean 
+ 		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+ 		name="dsObj"
+ 		p:driverClassName="com.mysql.jdbc.Driver"
+ 		p:url="jdbc:mysql://localhost:3306/craziapp"
+ 		p:username="root"
+ 		p:password="root"
+ 		
+ 	/>
+ 	
+ 	
+ 	<!-- SessionFactory Object: conn,stmt/ptmt, op... -->
+ 	
+ 	<bean
+ 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean"
+ 		name="sfObj"
+ 		p:dataSource-ref="dsObj"
+ 	>
+ 		<property name="hibernateProperties">
+ 			<props>
+ 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+ 				<prop key="hibernate.show_sql">true</prop>
+ 				<prop key="hibernate.format_sql">true</prop>
+ 				<prop key="hibernate.hbm2ddl.auto">update</prop>
+ 			</props>
+ 		</property>
+ 		
+ 		<property name="annotatedClasses">
+ 			<list>
+ 				<value>com.app.model.AdminRegister</value>
+ 				<value>com.app.model.AdminProfile</value>
+ 				<value>com.app.model.CardCategory</value>
+ 				<value>com.app.model.GroupAdmin</value>
+ 				<value>com.app.model.GroupProfile</value>
+ 				<value>com.app.model.MediaFiles</value>
+ 				<value>com.app.model.UserRegister</value>
+ 				<value>com.app.model.UserProfile</value>
+ 				<value>com.app.model.Cards</value>
+ 				<value>com.app.model.CardBookmarkUsers</value>
+ 				<value>com.app.model.UserContact</value>
+ 				
+ 				
+ 			</list>
+ 		</property>
+ 		
+ 	</bean>
+ 	
+ 	<!-- Hibernate Template Object -->
+ 	
+ 	<bean
+ 		class="org.springframework.orm.hibernate3.HibernateTemplate"
+ 		p:sessionFactory-ref="sfObj"
+ 	/>
+ 	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+    	<property name="sessionFactory" ref ="sfObj"/>
+	</bean>
+	
+		<!-- Multipart Enable -->
+	<bean
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+		name="multipartResolver">
+		<property name="maxUploadSize" value="20971520" />
+		<property name="maxInMemorySize" value="10485760" />
+	</bean>
+ 
+ </beans>
